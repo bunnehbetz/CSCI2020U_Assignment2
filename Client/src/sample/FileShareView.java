@@ -51,6 +51,29 @@ public class FileShareView extends Scene {
     }
 
     public void upload() {
+        String filename = clientFiles.getSelectionModel().getSelectedItem();
+        File file = new File(filename);
+        //upload
+        try {
+            Socket socket = new Socket(this.hostname, this.port);
+            long length = file.length();
+            byte[] bytes = new byte[8 * 1024];
+            InputStream in = new FileInputStream(file);
+            OutputStream out = socket.getOutputStream();
+
+            int count;
+            while ((count = in.read(bytes)) > 0) {
+                out.write(bytes, 0, count);
+            }
+
+            out.close();
+            in.close();
+            socket.close();
+
+        } catch (IOException ioe) {
+            System.out.println("Exception found on accept. Ignoring. Stack Trace :");
+            ioe.printStackTrace();
+        }
 
     }
 

@@ -52,7 +52,7 @@ public class StartView extends Scene {
 
         root.add(new Label("Server Directory:"), 0, 0);
         root.add(new Label("Client Directory:"), 0, 1);
-        root.add(new Label("IP:"), 0, 2);
+        root.add(new Label("IP (Optional):"), 0, 2);
 
         root.add(txtServerDirectory, 1, 0);
         root.add(txtClientDirectory, 1, 1);
