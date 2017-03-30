@@ -2,6 +2,10 @@ package sample;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -10,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -17,20 +22,26 @@ public class ClientController {
 
     private String hostname = "127.0.0.1";
     private int port = 8686;
-    private ListProperty<String> listProperty = new SimpleListProperty<>(); //may not be needed
-    private ListProperty<String> sListProperty = new SimpleListProperty<>();
-    private ListProperty<String> cListProperty = new SimpleListProperty<>();
     private File sDirectory, cDirectory;
     private File[] sFiles, cFiles;
+    private List<File> sList, cList;
 
     @FXML
     public TextField txtServerDirectory, txtClientDirectory, txtIP;
 
     @FXML
-    public ListView ServerDirectory, ClientDirectory;
+    public ListView ServerDirectory;
+
+    @FXML
+    public ListView ClientDirectory;
 
     @FXML
     public Button btnChoose1, btnChoose2, btnSubmit, btnUpload, btnDownload;
+
+    @FXML
+    public void initialize() {
+
+    }
 
     public void btnChoose1_OnAction(Event event) {
         Stage stage = new Stage();
@@ -58,14 +69,17 @@ public class ClientController {
 
         if (txtServerDirectory.getLength() != 0 && txtClientDirectory.getLength() != 0){
             sFiles = new File(sDirectory.getAbsolutePath()).listFiles();
-            sListProperty.set(FXCollections.observableArrayList(sFiles.toString()));
-            //ServerDirectory.itemsProperty().bind(sListProperty);
-            System.out.print(sListProperty);
+            sList = new ArrayList<File>(Arrays.asList(sFiles));
+            //ServerDirectory.getItems().addAll(sFiles);
+            ClientDirectory.getItems();
+            //ServerDirectory.setCellFactory(ComboBoxListCell.forListView(sList));
+            //for (int i = 0; i <sFiles.length; i++){
+            //    System.out.print(sFiles[i].getName());
+            //}
 
             cFiles = new File(cDirectory.getAbsolutePath()).listFiles();
-            cListProperty.set(FXCollections.observableArrayList(cFiles.toString()));
+            //ClientDirectory.getItems().addAll(cFiles);
             //ClientDirectory.itemsProperty().bind(cListProperty);
-            System.out.print(cListProperty);
 
             Stage stage = (Stage) btnSubmit.getScene().getWindow();
             stage.close();
@@ -75,6 +89,7 @@ public class ClientController {
     }
 
     public void btnUpload_OnAction(Event event){
+        System.out.print("Upload");
         //upload(file);
     }
 
@@ -87,8 +102,8 @@ public class ClientController {
         directoryChooser.setInitialDirectory(new File("."));
         File main_directory = directoryChooser.showDialog(stage);
         File[] local_files = new File(main_directory.getAbsolutePath()).listFiles();
-        listProperty.set(FXCollections.observableArrayList(local_files.toString()));
-        ClientDirectory.itemsProperty().bind(listProperty);
+        //listProperty.set(FXCollections.observableArrayList(local_files.toString()));
+        //ClientDirectory.itemsProperty().bind(listProperty);
     }
 
     public void upload(File file) {

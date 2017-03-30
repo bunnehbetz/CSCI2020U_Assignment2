@@ -1,9 +1,6 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -17,9 +14,8 @@ public class Main extends Application {
     public void promptUser() {
         try {
             Stage stage = new Stage();
-            Parent root = FXMLLoader.load(getClass().getResource("StartWindow.fxml"));
+            stage.setScene(new StartView());
             stage.setTitle("FileSharer v1.0");
-            stage.setScene(new Scene(root, 500, 130));
             stage.show();
         }
         catch (Exception e) {
@@ -30,9 +26,8 @@ public class Main extends Application {
     public void FileSharer(){
         try {
             Stage stage = new Stage();
-            Parent root = FXMLLoader.load(getClass().getResource("FileSharer.fxml"));
+            stage.setScene(new FileShareView());
             stage.setTitle("FileSharer v1.0");
-            stage.setScene(new Scene(root, 500, 600));
             stage.show();
         }
         catch (Exception e) {
