@@ -37,15 +37,29 @@ public final class Server {
 
         public void run() {
             while (thread_running) {
-//                try {
-//                    br = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    BufferedReader in = new BufferedReader(new InputStreamReader
+                            (client_socket.getInputStream()));
+
+                    String line = null;
+
+                    while ((line = in.readLine()) != null) {
+                        String[] command = line.split(" ");
+                        if (command[0].equals("upload")) {
+                            file_receive(command[1]);
+                        } else if (command[0].equals("download")){
+                            file_send(command[1]);
+                        }
+
+                        break;
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 if (Thread.interrupted()) {
-
+                    thread_running = false;
                 }
             }
         }
@@ -71,9 +85,34 @@ public final class Server {
                 ioe.printStackTrace();
             }
         }
+
+        public void file_receive(String filename) {
+
+        }
+
+        public void send_file_list() {
+//            try {
+//                byte[] bytes = new byte[8 * 1024];
+//                InputStream in = new FileInputStream(file);
+//                OutputStream out = client_socket.getOutputStream();
+//
+//                int count;
+//                while ((count = in.read(bytes)) > 0) {
+//                    out.write(bytes, 0, count);
+//                }
+//
+//                out.close();
+//                in.close();
+//                client_socket.close();
+//
+//            } catch (IOException ioe) {
+//                System.out.println("Exception found on accept. Ignoring. Stack Trace :");
+//                ioe.printStackTrace();
+//            }
+        }
     }
 
     public static void main(String[] args) {
-        Server server = new Server(6969);
+        Server server = new Server(8989);
     }
 }

@@ -6,11 +6,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import java.io.File;
+import java.io.*;
+import java.net.Socket;
 
 public class FileShareView extends Scene {
 
     private static String hostname = "127.0.0.1";
+    private static int port = 8989;
 
     private File[] sFiles, cFiles;
 
@@ -53,22 +55,19 @@ public class FileShareView extends Scene {
     public void upload() {
         String filename = clientFiles.getSelectionModel().getSelectedItem();
         File file = new File(filename);
+        FileInputStream fis = null;
+        BufferedInputStream bis = null;
+        OutputStream os = null;
         //upload
         try {
             Socket socket = new Socket(this.hostname, this.port);
-            long length = file.length();
-            byte[] bytes = new byte[8 * 1024];
-            InputStream in = new FileInputStream(file);
-            OutputStream out = socket.getOutputStream();
-
-            int count;
-            while ((count = in.read(bytes)) > 0) {
-                out.write(bytes, 0, count);
-            }
-
-            out.close();
-            in.close();
-            socket.close();
+            byte [] bytes  = new byte [(int)file.length()];
+            fis = new FileInputStream(file);
+            bis = new BufferedInputStream(fis);
+            bis.read(bytes,0,bytes.length);
+            os = socket.getOutputStream();
+            os.write(bytes,0,bytes.length);
+            os.flush();
 
         } catch (IOException ioe) {
             System.out.println("Exception found on accept. Ignoring. Stack Trace :");
@@ -78,7 +77,22 @@ public class FileShareView extends Scene {
     }
 
     public void download() {
+        String filename = clientFiles.getSelectionModel().getSelectedItem();
+        File file = new File(filename);
 
+        try {
+            Socket socket = new Socket(this.hostname, this.port);
+
+            PrintWriter out = new PrintWriter(socket.getOutputStream());
+            out.println("download " + filename);
+
+            out.close();
+            socket.close();
+
+        } catch (IOException ioe) {
+            System.out.println("Exception found on accept. Ignoring. Stack Trace :");
+            ioe.printStackTrace();
+        }
     }
 
     public ListView<String> getServerFiles() {
