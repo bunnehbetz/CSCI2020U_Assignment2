@@ -14,6 +14,8 @@ public class FileShareView extends Scene {
     private static String hostname = "127.0.0.1";
     private static int port = 8989;
 
+    private String selectedSFile, selectedCFile;
+
     private File[] sFiles, cFiles;
 
     private Button uploadButton;
@@ -53,8 +55,10 @@ public class FileShareView extends Scene {
     }
 
     public void upload() {
+        StartView startView = new StartView();
         String filename = clientFiles.getSelectionModel().getSelectedItem();
-        File file = new File(filename);
+        selectedCFile = startView.getSClientDirectory() + "\\" + filename; //This is the path in String of the selected file
+        File file = new File(selectedCFile);
         FileInputStream fis = null;
         BufferedInputStream bis = null;
         OutputStream os = null;
@@ -134,4 +138,5 @@ public class FileShareView extends Scene {
     public void setHostname(String ip) {
         hostname = ip;
     }
+
 }

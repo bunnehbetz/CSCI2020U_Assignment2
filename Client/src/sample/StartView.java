@@ -14,6 +14,8 @@ public class StartView extends Scene {
 
     private File sDirectory, cDirectory;
 
+    private static String sServerDirectory, sClientDirectory;
+
     private TextField txtServerDirectory;
 
     private TextField txtClientDirectory;
@@ -82,8 +84,11 @@ public class StartView extends Scene {
     public void submit() {
         FileShareView fileShareView = new FileShareView();
 
-        this.sDirectory = new File(txtServerDirectory.getText());
-        this.cDirectory = new File(txtClientDirectory.getText());
+        this.sServerDirectory = txtServerDirectory.getText();
+        this.sClientDirectory = txtClientDirectory.getText();
+
+        this.sDirectory = new File(sServerDirectory);
+        this.cDirectory = new File(sClientDirectory);
 
         if (txtIP.getLength() != 0) {
             fileShareView.setHostname(txtIP.getText());
@@ -99,5 +104,13 @@ public class StartView extends Scene {
             Main main = new Main();
             main.FileSharer();
         }
+    }
+
+    public String getSServerDirectory() {
+        return sServerDirectory;
+    }
+
+    public String getSClientDirectory() {
+        return sClientDirectory;
     }
 }
