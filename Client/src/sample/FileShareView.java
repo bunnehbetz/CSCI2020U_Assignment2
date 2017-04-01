@@ -55,23 +55,29 @@ public class FileShareView extends Scene {
     }
 
     public void upload() {
+        System.out.println("start");
         StartView startView = new StartView();
         String filename = clientFiles.getSelectionModel().getSelectedItem();
-        selectedCFile = startView.getSClientDirectory() + "\\" + filename; //This is the path in String of the selected file
+        selectedCFile = startView.getSClientDirectory() + "/" + filename; //This is the path in String of the selected file
         File file = new File(selectedCFile);
-        FileInputStream fis = null;
-        BufferedInputStream bis = null;
-        OutputStream os = null;
+        System.out.println(selectedCFile);
         //upload
         try {
             Socket socket = new Socket(this.hostname, this.port);
-            byte [] bytes  = new byte [(int)file.length()];
-            fis = new FileInputStream(file);
-            bis = new BufferedInputStream(fis);
-            bis.read(bytes,0,bytes.length);
-            os = socket.getOutputStream();
-            os.write(bytes,0,bytes.length);
-            os.flush();
+            byte[] bytes = new byte[16 * 1024];
+
+            InputStream in = new FileInputStream(file);
+            OutputStream out = socket.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(out);
+            BufferedWriter bw = new BufferedWriter(osw);
+            String sendCommand = "upload " + file;
+            bw.write(sendCommand);
+            bw.flush();
+
+            int count;
+            while ((count = in.read(bytes)) > 0) {
+                out.write(bytes, 0, count);
+            }
 
         } catch (IOException ioe) {
             System.out.println("Exception found on accept. Ignoring. Stack Trace :");

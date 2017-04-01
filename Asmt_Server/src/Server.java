@@ -36,15 +36,17 @@ public final class Server {
 
 
         public void run() {
+            System.out.println("Client connected");
             while (thread_running) {
                 try {
-                    BufferedReader in = new BufferedReader(new InputStreamReader
-                            (client_socket.getInputStream()));
-
+                    InputStream is = client_socket.getInputStream();
+                    InputStreamReader isr = new InputStreamReader(is);
+                    BufferedReader br = new BufferedReader(isr);
                     String line = null;
-
-                    while ((line = in.readLine()) != null) {
+//                  receiving commands
+                    while ((line = br.readLine()) != null) {
                         String[] command = line.split(" ");
+                        System.out.println(command[0]);
                         if (command[0].equals("upload")) {
                             file_receive(command[1]);
                         } else if (command[0].equals("download")){
@@ -67,7 +69,7 @@ public final class Server {
         public void file_send(String filename) {
             File file = new File(filename);
             try {
-                byte[] bytes = new byte[8 * 1024];
+                byte[] bytes = new byte[16 * 1024];
                 InputStream in = new FileInputStream(file);
                 OutputStream out = client_socket.getOutputStream();
 
@@ -75,7 +77,7 @@ public final class Server {
                 while ((count = in.read(bytes)) > 0) {
                     out.write(bytes, 0, count);
                 }
-
+                System.out.println("Write complete");
                 out.close();
                 in.close();
                 client_socket.close();
@@ -86,8 +88,26 @@ public final class Server {
             }
         }
 
-        public void file_receive(String filename) {
+        public void file_receive(String filename) throws IOException{
+            File file = new File(filename);
+            try {
+                byte[] bytes = new byte[16 * 1024];
+                InputStream in = new FileInputStream(file);
+                OutputStream out = client_socket.getOutputStream();
 
+                int count;
+                while ((count = in.read(bytes)) > 0) {
+                    out.write(bytes, 0, count);
+                }
+                System.out.println("Write complete");
+                out.close();
+                in.close();
+                client_socket.close();
+
+            } catch (IOException ioe) {
+                System.out.println("Exception found on accept. Ignoring. Stack Trace :");
+                ioe.printStackTrace();
+            }
         }
 
         public void send_file_list() {
